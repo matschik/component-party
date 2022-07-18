@@ -1,0 +1,37 @@
+<div x-data="
+		function fetchUsers() {
+			return {
+				users: null,
+				isLoading: false,
+				error: null,
+				async init() {
+					this.isLoading = true;
+					try {
+						this.users = (await (await fetch('https://randomuser.me/api/?results=3')).json()).results;
+					} catch (err) {
+						this.users = [];
+						this.error = err
+					}
+					this.isLoading = false;
+				},
+			};
+		}
+	">
+    <template x-if="isLoading">
+        <p>Loading...</p>
+    </template>
+
+    <template x-if="error">
+        <p>Error fetching users</p>
+    </template>
+    <template x-if="!error">
+        <ul>
+            <template x-for="user in users">
+                <li>
+                    <img :src="user.picture.thumbnail" :alt="`picture of ${user.name.first} ${user.name.last}`">
+                    <p x-text="`${user.name.first} ${user.name.last}`"></p>
+                </li>
+            </template>
+        </ul>
+    </template>
+</div>
